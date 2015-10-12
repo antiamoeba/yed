@@ -1,0 +1,12 @@
+Upvote/downvote buttons
+Control number of times a user can upvote or downvote
+Sort posts based on upvote ranking
+Search bar (for videos)
+Direct links in posts
+Photos/code uploads in posts
+Reply to other posts
+Link to other posts
+Ability to add diagrams to posts
+//Can access videos that aren't added through recommendations at end
+//Replace names with user ids
+//Add sorting algorithm

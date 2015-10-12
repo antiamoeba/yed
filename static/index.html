@@ -1,0 +1,264 @@
+<html>
+    <head>
+        <title>YED</title>
+        <link rel="stylesheet" type="text/css" href="/style.css">
+        <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            $(function() {
+                $(".up").click(function() {
+                    console.log("here!");
+                    postId = $(this).attr("postId");
+                    var data = {
+                        postId: postId,
+                        dir: 1
+                    }
+                    $.post("/votePost", data, function(info) {
+                        console.log("#"+postId+"counter")
+                        if(info.length>0) {
+                            $("#"+postId+"counter").html(info);
+                        }
+                    }) 
+                });
+                $(".down").click(function() {
+                    console.log("here!");
+                    postId = $(this).attr("postId");
+                    var data = {
+                        postId: postId,
+                        dir: -1
+                    }
+                    $.post("/votePost", data, function(info) {
+                        console.log("#"+postId+"counter")
+                        if(info.length>0) {
+                            $("#"+postId+"counter").html(info);
+                        }
+                    }) 
+                });
+                var socket = io();
+                $('#chatform').submit(function(e){
+                    e.preventDefault();
+                    socket.emit('chat message', $('#m').val());
+                    console.log($('#m').val());
+                    $('#m').val('');
+                    return false;
+                });
+                socket.on('chat message', function(msg){
+                    console.log(msg);
+                    $('#messages').append($('<li>').text(msg));
+                });
+            });
+            $(function() {
+                $("#search").click(function() {
+                    window.location.replace("new-website.com");
+                });
+                $(".hide").click(function() {
+                    var button = $(this);
+                    var container = button.parent();
+                    var data = {
+                        text: container.find(".comment").first().val(),
+                        superPostID: container.find(".superPost").first().html()
+                    }
+                    $.post("/makeComment", data, function(info) {
+                        window.location.reload();
+                    }); 
+                    container.hide();
+                });
+                $(".show").click(function() {
+                    var button = $(this);
+                    var container = button.parent();
+                    var toShow = container.find(".toShow").first();
+                    toShow.show();
+                });
+                $(".showPost").click(function(){
+                   var button = $(this);
+                   var container = button.parent();
+                   var toShow = container.find(".showField").first();
+                   toShow.show()
+                });
+                $(".hidePost").click(function(){
+                    var button = $(this);
+                    var container = button.parent();
+                    var data = {
+                        text: container.find(".submission").first().val(),
+                        vid: container.find(".video").first().html()
+                    }
+                    console.log("heres data")
+                    console.log(data.text)
+                    console.log(data.vid)
+                    $.post("/makePost", data, function(info){
+                       window.location.reload(); 
+                    });  
+                    container.hide();
+                });
+                
+            });
+        </script>
+        
+        <style type="text/css">
+        
+        h1 {
+            background-image: url("http://7-themes.com/data_images/out/51/6946579-space-stars-background.jpg");
+            background-size: 1300px 800px;
+            text-align: center;
+            color: white;
+            font-family: Tahoma,Verdana,Segoe,sans-serif;
+            font-size: 56;
+            padding-top: 20px;
+            padding-bottom: 60px;
+        }
+        h2 {
+            font-family: Tahoma;
+            padding: 25px 30px;
+            font-size: 14pt;
+        }
+        h3 {
+            font-family: Tahoma;
+            padding-top:10pt;
+        }
+        div.center {
+            text-align: center;
+        }
+        div.padding {
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
+        p.small {
+            font-size: 9pt;
+            color: #505050;
+        }
+        div.font {
+            font-size: 15pt;
+            font-family: sans-serif;
+            vertical-align: middle;
+        }
+        table {
+            margin-left: 60px;
+            width: 70%;
+        }
+        table.indent {
+            margin-left: 140px;
+            width: 64.45%;
+        }
+        
+        td.top {
+            vertical-align: top;
+        }
+        #tfheader{
+                background-color:rgba(255,255,255,.5);
+                height: 48px;
+                padding-top: 20px;
+                padding-left: 20px;
+                text-align: left;
+                vertical-align: middle;
+            }
+            #tfnewsearch{
+                float:right;
+                padding-left:10px;
+                padding-right:20px;
+            }
+            .tftextinput{
+                margin: 0;
+                padding: 5px 15px;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size:14px;
+                border:1px solid #0076a3; border-right:0px;
+                    
+            }
+            .tfbutton {
+                padding: 5px 15px;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size:14px;
+                cursor: pointer;
+                text-align: center;
+                color: #ffffff;
+                border: solid 1px #0076a3;
+                background-color: #0078a5;
+            }
+            .tfbutton:hover {
+                background-color: #0095cc;
+            }
+        </style>
+    </head>
+    <body>
+                <h1>
+                    YED
+                    <p></p>
+                <div id="tfheader" class ="font">
+                    Enter a YouTube URL to redirect to a thread page:
+                    <form id="tfnewsearch" method = "get" action = "/video">
+                        <input type="text" class="tftextinput" name = "vid"><input type="submit" value="search" class="tfbutton">
+                    </form>
+                </div>
+                </h1>
+            </body>
+        <h2> {{title}} - {{reputation}} points </h2>
+        <div style = "float:right"> <button onclick = "location.href='/'" type = "button" class = "tfbutton"> Home </button></div>
+        {{#if notlogged}}
+        <div style="float:right"><button onclick="location.href='/auth/google'" type = "button" class = "tfbutton">Login with Google</button></div>
+        {{/if}}
+        {{#if logged}}
+        <div style = "float:right"> <button onclick = "location.href='/updateAccount'" type = "button" class = "tfbutton"> Update Username </button></div>
+        {{/if}}
+        <div>
+            <iframe width="800" height="500" style = "margin-left: 30px;" src="https://www.youtube.com/embed/{{youtubeURL}}" frameborder="0" allowfullscreen></iframe>
+            <ul id="messages"></ul>
+            <form action="" id="chatform" style="float:right">
+                <input id="m" autocomplete="off" /><input type="submit" value="Send" class="tfbutton" />
+            </form>
+        </div>
+        <p style="margin-left: 30px"> Uploaded by {{adder}} at {{time}} </p>
+        <div style= "margin-left: 30px"><button type = "button" class = "tfbutton showPost"> New Post </button>
+        <div hidden class = "showField">
+            <textarea rows = "5" cols = "70" class = "submission"></textarea> 
+            <p></p>
+             <div hidden class = "video">{{youtubeid}}</div>
+            <button type = "button" class = "tfbutton hidePost"> Post </button>
+        </div></div>
+        {{#each posts}}
+            <p><table bgcolor= #c3dfef border="10" cellpadding="10" cellspacing="3" bordercolor="#c3dfef">
+                <tr>
+                    <td width = "50px" class = "top"> 
+                        <div style="text-align:center;"><button class="up" postId="{{id}}">
+                            <img src = "https://cdn3.iconfinder.com/data/icons/faticons/32/arrow-up-01-128.png" width="20" height="20"/>
+                        </button></div>
+                        <div id="{{id}}counter" style="text-align:center;" class = "padding">{{this.score}}</div> 
+                        <div style="text-align:center;"><button class="down" postId="{{id}}">
+                            <img src = "http://i.imgur.com/G1bybv9.png" width="20" height="20"/>
+                        </button></div>
+                    </td>
+                    <td>
+                        <p>{{this.content}}</p>
+                        <p class = "small">Posted by {{this.creator}} at {{this.time}}</p>
+                        <div> <button type = "button" class = "tfbutton show"> Reply </button>
+                        <div hidden class = "toShow">
+                            <div hidden class = "superPost">{{this.id}}</div>
+                            <textarea rows="5" cols="70" class = "comment"></textarea>
+                            <p></p>
+                            <button type = "button" class = "tfbutton hide"> Submit </button>
+                        </div>
+                        </div>
+                    </td>
+                </tr>
+            {{#each this.subposts}}
+            </table></p>
+            <p><table class = "indent" bgcolor= "#E0E0E0" border="5" cellpadding="10" cellspacing="3" bordercolor="#E0E0E0">
+                <tr>
+                    <td width = "50px" class = "top">
+                        <div style="text-align:center;"><button class="up" postId="{{id}}">
+                            <img src = "https://cdn3.iconfinder.com/data/icons/faticons/32/arrow-up-01-128.png" width="20" height="20"/>
+                        </button></div>
+                        <div id="{{id}}counter" style="text-align:center;" class = "padding">{{this.score}}</div>
+                        <div style="text-align:center;"><button class="down" postId="{{id}}">
+                            <img src = "http://i.imgur.com/G1bybv9.png" width="20" height="20"/>
+                        </button></div>
+                        </td>
+                    <td>
+                        <p>{{this.content}}</p>
+                        <p class = "small">{{this.creator}} replied to {{this.replyTo}} at {{this.time}} </p>
+                    </td>
+                </tr>     
+            </table></p>
+            {{/each}}
+        {{/each}}
+    </body>
+</html>

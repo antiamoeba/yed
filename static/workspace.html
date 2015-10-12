@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <title>Workspace</title>
+        <link rel="stylesheet" type="text/css" href="/style.css">
+        <link rel="stylesheet" type="text/css" href="/workspace.css">
+        <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    </head>
+    <body>
+        <div id="player"></div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            var start = false;
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            
+            var player;
+            function onYouTubeIframeAPIReady() {
+                var height = window.innerHeight*2/3.0
+                var width = height*16/9.0
+                console.log(height+":"+width)
+                player = new YT.Player('player', {
+                    height: height+"",
+                    width: width+"",
+                    videoId: '{{video}}',
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            }
+            function onPlayerReady(event) {
+                player = event.target;
+                event.target.playVideo();
+                event.target.pauseVideo();
+                keepSync();
+            }
+            function onPlayerStateChange(event) {
+                if (start) {
+                    if (event.data === 1) {
+                        publish("play", null);
+                    }
+                    // Pause event.
+                    else if (event.data === 2) {
+                        publish("pause", player.getCurrentTime());
+                    }
+                }
+            }
+            function playVideo(time) {
+                if(time)
+                    player.seekTo(time, true)
+                player.playVideo();
+            }
+            function pauseVideo(time) {
+                player.seekTo(time, true)
+                player.pauseVideo();
+            }
+            function publish(message, time) {
+                socket.emit(message, time);
+            }
+            function keepSync() {
+                start = true
+                socket.on('play', function(time) {
+                   playVideo(time); 
+                });
+                socket.on('pause', function(time) {
+                   pauseVideo(time); 
+                });
+            }
+        </script>
+        <script src="/workspace.js"></script>
+        <div id="chatbox" class="chatbox">
+        </div>
+        <div class="label">Draw</div>
+        <button id="clearSk" style="float:right">
+            <a href="#" class="myButton">Clear</a>
+        </button>
+        <div class="canvas-container">
+        	<canvas id="sketchpad" class="sketchpad" width="0" height="0">
+	            
+	        </canvas>
+        </div>
+    </body>
+</html>

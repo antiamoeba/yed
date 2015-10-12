@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <title>Welcome to YED</title>
+        <style>
+            body {
+                background-image: url("http://7-themes.com/data_images/out/51/6946579-space-stars-background.jpg");
+                background-size: 1300px 800px;
+
+            }
+            h3 {
+                padding-top: 170px;
+            }
+            h1 {
+                text-align: center;
+                color: white;
+                font-family: Tahoma,Verdana,Segoe,sans-serif;
+                font-size: 56;
+                background-color:rgba(255,255,255,.5);
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+            h2 {
+                text-align: center;
+                color: white;
+                font-family: Tahoma,Verdana,Segoe,sans-serif;
+                font-size: 25;
+            }
+            
+            #tfheader{
+                background-color:#c3dfef;
+                height: 48px;
+                padding-left: 20px;
+                padding-top: 25px;
+            }
+            #tfnewsearch{
+                float:center;
+                padding-left:10px;
+                padding-right:20px;
+            }
+            .tftextinput{
+                margin: 0;
+                padding: 5px 15px;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size:14px;
+                border:1px solid #0076a3; border-right:0px;
+                background-color: rgba(255,255,255,.7);
+            }
+            .tfbutton {
+                padding: 5px 15px;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size:14px;
+                cursor: pointer;
+                text-align: center;
+                color: #ffffff;
+                border: solid 1px #0076a3;
+                background-color: #0078a5;
+            }
+            .tfbutton:hover {
+                background-color: #0095cc;
+            }
+            .main-container {
+                float: left;
+                position: relative;
+                left: 50%;
+            }
+            .fixer-container {
+                float: left;
+                position: relative;
+                left: -50%;
+            }
+        </style>
+        
+    </head>
+    <body>
+        <h3>
+        </h3>
+        <h1>
+            YED
+        </h1>
+        <h2>
+        Enter a YouTube URL to Begin
+        </h2>
+        <div class="main-container">
+        <div class="fixer-container">
+        <ul class="list-of-floating-elements">
+
+      <li class="floated">
+          <form id="tfnewsearch" method = "get" action = "/video">
+            <input type="text" class="tftextinput" name = "vid"><input type="submit" value="Enter" class="tfbutton">
+        </form>
+      </li>
+        </ul>
+        </div>
+        </div>
+        
+    </body>
+</html>
